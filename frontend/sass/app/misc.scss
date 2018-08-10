@@ -1,0 +1,8 @@
+.fclear {
+  //clear: both;
+  &::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+}

@@ -1,0 +1,20 @@
+<include('../layouts/layout.marko', data)>
+    <@body>
+<main class="games">
+        <h1>Games We Play</h1>
+        <p class="lead">At ${out.global.site.title} we play various PC games. Here's an overview of the games we're active in.</p>
+        <for(game in Array.from(data.games))>
+            <div class="game fclear">
+                <h2><a href="/games/${game.getIdentifier()}">${game.getTitle()}</a></h2>
+                <p>
+                    <if(game.getLogoUrl())>
+                        <img src="/media/${game.getLogoUrl()}" class="logo">
+                    </if>
+                    ${game.getShortDescription() ? game.getShortDescription() : 'Sadly there is no description for this game.'}<br>
+                    <a href="/games/${game.getIdentifier()}">More about this game…</a>
+                </p>
+            </div>
+        </for>
+</main>
+    </@body>
+</include>

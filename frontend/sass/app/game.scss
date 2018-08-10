@@ -1,0 +1,11 @@
+@import 'variables';
+
+main.game,
+main.games {
+  img.logo {
+    float: left;
+    max-height: 100px;
+    max-width: 200px;
+    margin-right: 1em;
+  }
+}
