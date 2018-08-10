@@ -5,16 +5,19 @@
     <if(data.game.getDescription())>
         <p class="fclear">
             <if(data.game.getLogoUrl())>
-                            <img src="/media/${data.game.getLogoUrl()}" class="logo">
+                <img src="/media/${data.game.getLogoUrl()}" alt="${data.game.getTitle()} logo" class="logo">
             </if>
-            ${data.game.getDescription()}
+            $!{Utils.displayText(data.game.getDescription())}
         </p>
     </if>
     <for(server in Array.from(data.game.getServers()))>
-        <h2><a href="/games/${data.game.getIdentifier()}/servers/${server.getIdentifier()}">${server.getTitle()}</a></h2>
+        <h2>${server.getTitle()}</h2>
         <p>
-            ${server.getDescription() ? server.getDescription() : 'Sadly there is no description for this server.'}<br>
+            $!{Utils.displayText(server.getDescription() ? server.getDescription() : 'Sadly there is no description for this server.')}
         </p>
+        <if(server.isHostValid())>
+            <p>The ${data.game.getTitle()} ${server.getTitle()} public server can be joined at any time: <a href="${server.getHostConnectUrl()}" class="code">${server.getHostDisplayText()}</a>.</p>
+        </if>
     </for>
 </main>
     </@body>

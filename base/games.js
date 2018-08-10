@@ -61,14 +61,7 @@ class Games {
         return new Promise(async (resolve, reject) => {
             const Game = require('../classes/game');
             const game = new Game(dbGame.gameId, dbGame.identifier);
-            if (dbGame.title)
-                game.setTitle(dbGame.title);
-            if (dbGame.shortDescription)
-                game.setShortDescription(dbGame.shortDescription);
-            if (dbGame.description)
-                game.setDescription(dbGame.description);
-            if (dbGame.logoPath)
-                game.setLogoPath(dbGame.logoPath);
+            game.parseDb(dbGame);
 
             try {
                 await game.load();

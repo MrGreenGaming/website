@@ -1,15 +1,32 @@
 class GameServer {
     /**
      *
+     * @param {Game} game
      * @param {number} id
      * @param {string} identifier
      */
-    constructor(id, identifier) {
+    constructor(game, id, identifier) {
+        this.game = game;
         this.id = id;
         this.identifier = identifier;
 
         /**@type {Map<number, GameServerMedium>} */
         this.media = new Map();
+    }
+
+    /**
+     * Parse database result
+     * @param {object} dbResult
+     */
+    parseDb(dbResult) {
+        if (dbResult.title)
+            this.setTitle(dbResult.title);
+        if (dbResult.shortDescription)
+            this.setShortDescription(dbResult.shortDescription);
+        if (dbResult.description)
+            this.setDescription(dbResult.description);
+        if (dbResult.hostAddress)
+            this.setHost(dbResult.hostAddress, dbResult.hostPublicPort, dbResult.hostQueryPort);
     }
 
     /**
@@ -29,6 +46,14 @@ class GameServer {
 
             resolve();
         });
+    }
+
+    /**
+     * Get parent game
+     * @return {Game}
+     */
+    getGame() {
+        return this.game;
     }
 
     /**
@@ -125,6 +150,31 @@ class GameServer {
     }
 
     /**
+     * Set host
+     * @param {string} address
+     * @param {number} [publicPort]
+     * @param {number} [queryPort]
+     */
+    setHost(address, publicPort, queryPort) {
+        this.host = {
+            address,
+            publicPort,
+            queryPort
+        };
+
+        delete this.cachedHostConnectUrl;
+        delete this.cachedHostDisplayText;
+    }
+
+    /**
+     * Get host address, public port and query port
+     * @return {{address: string, publicPort: number, queryPort: number}|void}
+     */
+    getHost() {
+        return this.host;
+    }
+
+    /**
      * Set short description
      * @param {string} shortDescription
      */
@@ -154,7 +204,50 @@ class GameServer {
      * @return {string|void} description
      */
     getDescription() {
-        return this.description;
+        return this.description || this.shortDescription;
+    }
+
+    /**
+     * Get host connect url
+     * @return {string|void} hostConnectUrl
+     */
+    getHostConnectUrl() {
+        if (this.cachedHostConnectUrl)
+            return this.cachedHostConnectUrl;
+
+        const host = this.getHost();
+        if (!host) {
+            delete this.cachedHostConnectUrl;
+            return;
+        }
+
+        return this.cachedHostConnectUrl = this.getGame().getHostConnectUrl(host.address, host.publicPort, host.queryPort);
+    }
+
+    /**
+     * Get host display text
+     * @return {string|void} hostDisplayText
+     */
+    getHostDisplayText() {
+        if (this.cachedHostDisplayText)
+            return this.cachedHostDisplayText;
+
+        const host = this.getHost();
+        if (!host) {
+            delete this.cachedHostDisplayText;
+            return;
+        }
+
+        return this.cachedHostDisplayText = this.getGame().getHostDisplayText(host.address, host.publicPort, host.queryPort);
+    }
+
+    /**
+     * Check host validity
+     * @return {boolean} validity
+     */
+    isHostValid() {
+        const host = this.getHost();
+        return typeof(host) === 'object' && typeof(host.address) === 'string' && host.address;
     }
 }
 

@@ -21,7 +21,7 @@ main {
     font-weight: 300;
     padding: 0.8em;
     display: flex;
-    align-items:center;
+    align-items: center;
 
     &.important {
       background-color: $header-important-bg-color;
@@ -109,11 +109,22 @@ main {
 
   .code {
     background-color: $code-bg-color;
-    color: $code-text-color;
     border-radius: 0.5em;
     padding: 0.3em 0.7em;
     white-space: pre-line;
     word-wrap: break-word;
+  }
+
+  .code, a.code {
+    color: $code-text-color;
+  }
+
+  a.code {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   table {

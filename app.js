@@ -251,6 +251,8 @@ class App {
                 return;
             }
 
+            global.Utils = require('./utils/utils');
+
             resolve();
         });
     }

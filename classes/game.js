@@ -15,6 +15,29 @@ class Game {
     }
 
     /**
+     * Parse database result
+     * @param {object} dbResult
+     */
+    parseDb(dbResult) {
+        if (dbResult.title)
+            this.setTitle(dbResult.title);
+        if (dbResult.shortDescription)
+            this.setShortDescription(dbResult.shortDescription);
+        if (dbResult.description)
+            this.setDescription(dbResult.description);
+        if (dbResult.logoPath)
+            this.setLogoPath(dbResult.logoPath);
+        if (dbResult.hostConnectFormat)
+            this.setHostConnectFormat(dbResult.hostConnectFormat);
+        if (dbResult.hostDisplayFormat)
+            this.setHostDisplayFormat(dbResult.hostDisplayFormat);
+        if (dbResult.defaultPublicPort)
+            this.setDefaultPublicPort(dbResult.defaultPublicPort);
+        if (dbResult.defaultQueryPort)
+            this.setDefaultQueryPort(dbResult.defaultQueryPort);
+    }
+
+    /**
      * Load game
      * @return {Promise<void>}
      */
@@ -52,9 +75,12 @@ class Game {
             this.serversById.clear();
             this.serversByIdentifier.clear();
             for (const dbServer of dbServers) {
-                let server;
+                const GameServer = require('./gameServer');
+                const server = new GameServer(this, dbServer.gameServerId, dbServer.identifier);
+                server.parseDb(dbServer);
+
                 try {
-                    server = await this.processDbServer(dbServer);
+                    await server.load();
                 } catch (error) {
                     log.warn(error);
                     continue;
@@ -65,34 +91,6 @@ class Game {
             }
 
             resolve();
-        });
-    }
-
-    /**
-     * Process database server
-     * @private
-     * @param {object} dbServer
-     * @return {Promise<GameServer>}
-     */
-    processDbServer(dbServer) {
-        return new Promise(async (resolve, reject) => {
-            const GameServer = require('./gameServer');
-            const server = new GameServer(dbServer.gameServerId, dbServer.identifier);
-            if (dbServer.title)
-                server.setTitle(dbServer.title);
-            if (dbServer.shortDescription)
-                server.setShortDescription(dbServer.shortDescription);
-            if (dbServer.description)
-                server.setDescription(dbServer.description);
-
-            try {
-                await server.load();
-            } catch (error) {
-                reject(error);
-                return;
-            }
-
-            resolve(server);
         });
     }
 
@@ -194,7 +192,117 @@ class Game {
      * @return {string|void} description
      */
     getDescription() {
-        return this.description;
+        return this.description || this.shortDescription;
+    }
+
+    /**
+     * Set default public port
+     * @param {number} publicPort
+     */
+    setDefaultPublicPort(publicPort) {
+        this.defaultPublicPort = publicPort;
+    }
+
+    /**
+     * Get default public port
+     * @return {number|void} publicPort
+     */
+    getDefaultPublicPort() {
+        return this.defaultPublicPort;
+    }
+
+    /**
+     * Set default query port
+     * @param {number} queryPort
+     */
+    setDefaultQueryPort(queryPort) {
+        this.defaultQueryPort = queryPort;
+    }
+
+    /**
+     * Get default query port
+     * @return {number|void} queryPort
+     */
+    getDefaultQueryPort() {
+        return this.defaultQueryPort;
+    }
+
+    /**
+     * Set host display format
+     * @param {string} hostDisplayFormat
+     */
+    setHostDisplayFormat(hostDisplayFormat) {
+        this.hostDisplayFormat = hostDisplayFormat;
+    }
+
+    /**
+     * Get host display format
+     * @return {string|void} hostDisplayFormat
+     */
+    getHostDisplayFormat() {
+        return this.hostDisplayFormat;
+    }
+
+    /**
+     * Set host connect format
+     * @param {string} hostConnectFormat
+     */
+    setHostConnectFormat(hostConnectFormat) {
+       this.hostConnectFormat =  hostConnectFormat;
+    }
+
+    /**
+     * Get host connect format
+     * @return {string|void} hostConnectFormat
+     */
+    getHostConnectFormat() {
+        return this.hostConnectFormat;
+    }
+
+    /**
+     * Get host connect URL
+     * @param {string} address
+     * @param {number} [publicPort]
+     * @param {number} [queryPort]
+     * @returns {string|void} hostConnectUrl
+     */
+    getHostConnectUrl(address, publicPort, queryPort) {
+        const hostConnectFormat = this.getHostConnectFormat();
+        if (!hostConnectFormat)
+            return;
+
+        return Game.hostReplacer(hostConnectFormat, address, publicPort, queryPort);
+    }
+
+    /**
+     * Get host display text
+     * @param {string} address
+     * @param {number} [publicPort]
+     * @param {number} [queryPort]
+     * @returns {string|void} hostDisplayText
+     */
+    getHostDisplayText(address, publicPort, queryPort) {
+        const hostDisplayFormat = this.getHostDisplayFormat();
+        if (!hostDisplayFormat)
+            return;
+
+        return Game.hostReplacer(hostDisplayFormat, address, publicPort, queryPort);
+    }
+
+    /**
+     * Get host connect URL
+     * @param {string} format
+     * @param {string} address
+     * @param {number} [publicPort]
+     * @param {number} [queryPort]
+     * @returns {string|void} hostConnectUrl
+     */
+    static hostReplacer(format, address, publicPort, queryPort) {
+        format = format.replace('$ADDRESS', address);
+        format = format.replace('$PUBLICPORTCOLON', publicPort ? ':' : '');
+        format = format.replace('$PUBLICPORT', publicPort ? publicPort : '');
+        format = format.replace('$QUERYPORTCOLON', queryPort ? ':' : '');
+        return format.replace('$QUERYPORT', queryPort ? queryPort : '');
     }
 }
 
