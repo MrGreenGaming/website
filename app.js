@@ -251,6 +251,7 @@ class App {
                 return;
             }
 
+            global.Users = require('./base/users');
             global.Utils = require('./utils/utils');
 
             resolve();
