@@ -1,5 +1,5 @@
 const Express = require('express');
-const router = Express.Router(undefined);
+const router = module.exports = Express.Router(undefined);
 
 router.get('/', (req, res, next) => {
     const template = require('../views/index.marko');
@@ -34,5 +34,3 @@ router.get('/faq', (req, res, next) => {
         }
     });
 });
-
-module.exports = router;

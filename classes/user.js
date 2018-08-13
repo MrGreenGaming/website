@@ -159,7 +159,6 @@ class User {
         this.setNextThink();
 
         if (this.isDataChanged()) {
-            this.setDataChanged(false);
             this.save();
         }
 
@@ -180,6 +179,7 @@ class User {
             coinsBalance: this.getCoins().getCoinsBalance(),
             created: this.getCreated()
         };
+        this.setDataChanged(false);
 
         try {
             await db.query(`UPDATE \`users\` SET ? WHERE \`userId\` = ?`, [dbData, this.getId()]);

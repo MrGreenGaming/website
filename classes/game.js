@@ -1,6 +1,6 @@
 class Game {
     /**
-     *
+     * Construct game
      * @param {number} id
      * @param {string} identifier
      */

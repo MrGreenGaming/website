@@ -175,6 +175,7 @@ class App {
 
         this.express.use('/', require('./routes/static'));
         this.express.use('/games', require('./routes/games'));
+        this.express.use('/api', require('./routes/api'));
 
         //Error Handler is our last stop
         this.express.use((req, res, next) => {
@@ -243,8 +244,10 @@ class App {
         return new Promise(async (resolve, reject) => {
             this.modules = {};
 
+            const ApiApps = global.ApiApps = require('./base/apiApps');
             const Games = global.Games = require('./base/games');
             try {
+                await ApiApps.load();
                 await Games.load();
             } catch (error) {
                 reject(error);

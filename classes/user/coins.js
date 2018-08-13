@@ -49,11 +49,15 @@ class UserCoins {
      * @param {number} newBalance
      */
     setCoinsBalance(newBalance) {
-        if (newBalance === this.coinsBalance || typeof(newBalance) !== 'number')
+        if (typeof(newBalance) !== 'number')
+            return;
+
+        newBalance = Utils.mathClamp(newBalance, -2147483648, 2147483647);
+        if (newBalance === this.coinsBalance)
             return;
 
         //Clamp to MySQL `int` types limits
-        this.coinsBalance = Utils.mathClamp(newBalance, -2147483648, 2147483647);
+        this.coinsBalance = newBalance;
         this.getUser().setDataChanged();
     }
 

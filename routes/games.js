@@ -1,5 +1,5 @@
 const Express = require('express');
-const router = Express.Router(undefined);
+const router = module.exports = Express.Router(undefined);
 
 router.get('/', async (req, res, next) => {
     const template = require('../views/games/index.marko');
@@ -41,5 +41,3 @@ router.get('/:gameIdentifier', async (req, res, next) => {
         game: req.game
     });
 });
-
-module.exports = router;

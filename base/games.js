@@ -28,7 +28,7 @@ class Games {
             for (const dbGame of dbGames) {
                 let game;
                 try {
-                    game = await Games.processDbGame(dbGame);
+                    game = await this.processDbGame(dbGame);
                 } catch (error) {
                     log.warn(error);
                     continue;
@@ -55,7 +55,7 @@ class Games {
      * Process database game
      * @private
      * @param {object} dbGame
-     * @return {Promise<Game>}
+     * @return {Promise<Game>} game
      */
     static processDbGame(dbGame) {
         return new Promise(async (resolve, reject) => {

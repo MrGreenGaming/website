@@ -1,9 +1,22 @@
 /** @type {Map<number, User>} */
 const cachedUsersById = new Map();
 
-const reloadTime = 600;
+const thinkTimeoutSeconds = 5;
 
 class Users {
+    /**
+     * Process database game
+     * @private
+     * @param {object} dbGame
+     * @return {Promise<Game>}
+     */
+    static getUserByForumsAccount(username, password) {
+        return new Promise(async (resolve, reject) => {
+            //ToDo
+            resolve(game);
+        });
+    }
+
     /**
      * Get all users in cache
      * @return {Set<User>} users
@@ -16,7 +29,7 @@ class Users {
      *
      * @private
      * @param {number} id
-     * @return {Promise<object|void>}
+     * @return {Promise<object|void>} dbResult
      */
     static getUserResultsFromForums(id) {
         return new Promise(async (resolve, reject) => {
@@ -58,7 +71,7 @@ class Users {
     }
 
     /**
-     * Get by id or identifier
+     * Get user by id
      * @param {number} id
      * @return {Promise<User|void>} user
      */
@@ -105,7 +118,7 @@ class Users {
     }
 
     /**
-     * Get user by id
+     * Get user by id from cache
      * @param {number} id
      * @return {User|void} user
      */
@@ -123,6 +136,18 @@ class Users {
         cachedUsersById.delete(user.getId());
         log.debug(`Invalidated user #${user.getId()}`);
     }
+
+    static think() {
+        const users = this.getAllCached();
+        const now = new Date();
+        for (const user of users) {
+            user.think(now);
+        }
+
+        setTimeout(() => Users.think(), thinkTimeoutSeconds * 1000);
+    }
 }
+
+setTimeout(() => Users.think(), thinkTimeoutSeconds * 1000);
 
 module.exports = Users;
