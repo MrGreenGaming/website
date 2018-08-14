@@ -15,6 +15,10 @@ class User {
         /** @private */
         this.initialized = new Date();
 
+        /** @private */
+        this.created = new Date();
+
+        /** @private */
         this.lastActivity = new Date();
 
         /** @private
@@ -29,6 +33,22 @@ class User {
 
         /** @private */
         this.invalidated = false;
+
+        /** @type {string|void}
+         * @private */
+        this.avatar = undefined;
+
+        /** @type {string|void}
+         *  @private */
+        this.avatarThumb = undefined;
+
+        /** @type {string|void}
+         *  @private */
+        this.name = undefined;
+
+        /** @type {string|void}
+         *  @private */
+        this.identifier = undefined;
     }
 
     /**
@@ -91,12 +111,21 @@ class User {
     /**
      * Parse database result
      * @param {object} dbResult
+     * @param {object} forumsDbResult
      */
-    parseDbResult(dbResult) {
+    parseDbResults(dbResult, forumsDbResult) {
         if (dbResult.created instanceof Date)
             this.created = dbResult.created;
         if (typeof(dbResult.coinsBalance) === 'number')
             this.coinsBalance = dbResult.coinsBalance;
+        if (typeof(forumsDbResult.name) === 'string' && forumsDbResult.name)
+            this.name = forumsDbResult.name;
+        if (typeof(forumsDbResult.members_seo_name) === 'string' && forumsDbResult.members_seo_name)
+            this.identifier = forumsDbResult.members_seo_name;
+        if (typeof(forumsDbResult.pp_main_photo) === 'string' && forumsDbResult.pp_main_photo)
+            this.avatar = (!forumsDbResult.pp_main_photo.includes('://') ? config.url.avatars : '') + forumsDbResult.pp_main_photo;
+        if (typeof(forumsDbResult.pp_thumb_photo) === 'string' && forumsDbResult.pp_thumb_photo)
+            this.avatarThumb = (!forumsDbResult.pp_thumb_photo.includes('://') ? config.url.avatars : '') + forumsDbResult.pp_thumb_photo;
     }
 
     /**
@@ -225,6 +254,38 @@ class User {
      */
     setInvalidated(invalidated) {
         this.invalidated = invalidated;
+    }
+
+    /**
+     * Get avatar url
+     * @return {string|void} url
+     */
+    getAvatar() {
+        return this.avatar;
+    }
+
+    /**
+     * Get avatar thumbnail url
+     * @return {string|void} url
+     */
+    getAvatarThumb() {
+        return this.avatarThumb;
+    }
+
+    /**
+     * Get name
+     * @return {string|void} name
+     */
+    getName() {
+        return this.name;
+    }
+
+    /**
+     * Get identifier
+     * @return {string|void} identifier
+     */
+    getIdentifier() {
+        return this.identifier;
     }
 }
 

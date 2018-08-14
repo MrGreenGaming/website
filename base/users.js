@@ -26,36 +26,16 @@ class Users {
     }
 
     /**
-     *
+     * Adds user to database
      * @private
-     * @param {number} id
-     * @return {Promise<object|void>} dbResult
+     * @param {object} forumsDbResult
+     * @return {Promise<object>} dbResult
      */
-    static getUserResultsFromForums(id) {
+    static addUserToDb(forumsDbResult) {
         return new Promise(async (resolve, reject) => {
-            if (!config.forums.enabled) {
-                resolve();
-                return;
-            }
-
-            let forumsDbResult;
-            try {
-                const forumsDbResults = await forumsDb.query(`SELECT \`member_id\`, \`joined\` FROM \`x_utf_l4g_core_members\` WHERE \`member_id\` = ? LIMIT 0,1`, [id]);
-                if (forumsDbResults && forumsDbResults.length)
-                    forumsDbResult = forumsDbResults[0];
-            } catch(error) {
-                reject(error);
-                return;
-            }
-
-            if (!dbResult) {
-                resolve();
-                return;
-            }
-
             const dbResult = {
                 userId: forumsDbResult.member_id,
-                created: typeof(forumsDbResult.joined) === 'number' && forumsDbResult.joined ? new Date(forumsDbResult.joined * 1000) : new Date()
+                created: typeof(forumsDbResult.joined) === 'number' && forumsDbResult.joined > 0 ? new Date(forumsDbResult.joined * 1000) : new Date(),
             };
 
             //Add to users table
@@ -88,27 +68,40 @@ class Users {
                 return;
             }
 
-            let dbUserResult;
+            let dbUserResult, forumsDbUserResult;
             try {
                 const dbResults = await db.query(`SELECT \`userId\`, \`created\`, \`coinsBalance\` FROM \`users\` WHERE \`userId\` = ? LIMIT 0,1`, [id]);
                 if (dbResults && dbResults.length)
                     dbUserResult = dbResults[0];
-                else
-                    dbUserResult = await this.getUserResultsFromForums(id);
+
+                const forumsDbResults = config.forums.enabled ? await forumsDb.query(`SELECT \`member_id\`, \`name\`, \`joined\`, \`pp_main_photo\`, \`pp_thumb_photo\`, \`members_seo_name\` FROM \`x_utf_l4g_core_members\` WHERE \`member_id\` = ? LIMIT 0,1`, [id]) : undefined;
+                if (forumsDbResults && forumsDbResults.length)
+                    forumsDbUserResult = forumsDbResults[0];
             } catch (error) {
                 reject(error);
                 return;
             }
 
             if (!dbUserResult) {
-                //User not found
-                resolve();
-                return;
+                if (!forumsDbUserResult) {
+                    //User not found
+                    resolve();
+                    return;
+                }
+
+                try {
+                    dbUserResult = await this.addUserToDb(forumsDbUserResult);
+                } catch(error) {
+                    reject(error);
+                    return;
+                }
             }
+
+            //ToDo: Check if user is banned on forums
 
             const User = require('../classes/user');
             const user = new User(dbUserResult.userId);
-            user.parseDbResult(dbUserResult);
+            user.parseDbResults(dbUserResult || {}, forumsDbUserResult || {});
 
             cachedUsersById.set(user.getId(), user);
 

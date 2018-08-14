@@ -37,6 +37,16 @@ class Utils {
     static mathClamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
     }
+
+    /**
+     * Generate md5 hash
+     * @param data
+     * @return {string} hexRepresentation
+     */
+    static md5(data) {
+        const crypto = require('crypto');
+        return crypto.createHash('md5').update(data).digest('hex');
+    }
 }
 
 module.exports = Utils;

@@ -7,7 +7,7 @@ class UserCoins {
         this.user = user;
 
         /** @private **/
-        this.coinsBalance = 0;
+        this.balance = 0;
     }
 
     /**
@@ -28,7 +28,7 @@ class UserCoins {
             return;
         }
 
-        this.setCoinsBalance(this.getCoinsBalance() + amount);
+        this.setBalance(this.getBalance() + amount);
     }
 
     /**
@@ -41,23 +41,23 @@ class UserCoins {
             return;
         }
 
-        this.setCoinsBalance(this.getCoinsBalance() - amount);
+        this.setBalance(this.getBalance() - amount);
     }
 
     /**
      * Set new coins balance
      * @param {number} newBalance
      */
-    setCoinsBalance(newBalance) {
+    setBalance(newBalance) {
         if (typeof(newBalance) !== 'number')
             return;
 
         newBalance = Utils.mathClamp(newBalance, -2147483648, 2147483647);
-        if (newBalance === this.coinsBalance)
+        if (newBalance === this.balance)
             return;
 
         //Clamp to MySQL `int` types limits
-        this.coinsBalance = newBalance;
+        this.balance = newBalance;
         this.getUser().setDataChanged();
     }
 
@@ -65,8 +65,8 @@ class UserCoins {
      * Get current coins balance
      * @return {number} coinsBalance
      */
-    getCoinsBalance() {
-        return typeof(this.coinsBalance) === 'number' ? this.coinsBalance : 0;
+    getBalance() {
+        return typeof(this.balance) === 'number' ? this.balance : 0;
     }
 }
 
