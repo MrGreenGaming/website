@@ -34,3 +34,14 @@ router.get('/faq', (req, res, next) => {
         }
     });
 });
+
+router.get('/greencoins', (req, res, next) => {
+    const template = require('../views/greencoins/index.marko');
+    res.marko(template, {
+        page: {
+            title: 'GreenCoins',
+            description: 'GreenCoins allow Mr. Green Gaming players to buy in-game items such as cosmetic items.',
+            path: App.getExpressPath(req.baseUrl, req.path)
+        }
+    });
+});
