@@ -30,7 +30,7 @@ router.use('/', async (req, res, next) => {
     };
 
     //Check app id presence
-    const appId = req.body.appId = typeof(req.body.appId) === 'number' ? req.body.appId : typeof(req.body.appId) === 'string' ? parseInt(req.body.appId, 10) : undefined;
+    const appId = req.appId = req.body.appId = typeof(req.body.appId) === 'number' ? req.body.appId : typeof(req.body.appId) === 'string' ? parseInt(req.body.appId, 10) : undefined;
     if (isNaN(appId)) {
         deny(1, 'Invalid App ID');
         return;

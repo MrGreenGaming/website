@@ -36,12 +36,25 @@ class UserCoins {
      * @param {number} amount
      */
     take(amount) {
-        if (typeof(amount) !== 'number'  || amount <= 0) {
+        if (typeof(amount) !== 'number' || amount <= 0) {
             log.warn('Coins amount to take was an invalid number', typeof(amount), amount);
             return;
         }
 
         this.setBalance(this.getBalance() - amount);
+    }
+
+    /**
+     * Change coins by amount
+     * @param {number} amount
+     */
+    changeBalance(amount) {
+        if (typeof(amount) !== 'number' || !amount) {
+            log.warn('Coins amount to take was an invalid number', typeof(amount), amount);
+            return;
+        }
+
+        this.setBalance(amount > 0 ? (this.getBalance() + amount) : (this.getBalance() - Math.abs(amount)));
     }
 
     /**
@@ -67,6 +80,52 @@ class UserCoins {
      */
     getBalance() {
         return typeof(this.balance) === 'number' ? this.balance : 0;
+    }
+
+    /**
+     * Submit transaction
+     * @param {number} amount
+     * @param {number} appId
+     * @param {string} comments
+     * @return {Promise<number>} success
+     */
+    submitTransaction(amount, appId, comments) {
+        return new Promise(async (resolve, reject) => {
+            if (!amount) {
+                resolve(false);
+                return;
+            }
+
+            //Check if we can afford it
+            if (amount < 0) {
+                if ((this.getBalance() - Math.abs(amount)) < 0) {
+                    resolve(false);
+                    return;
+                }
+            }
+
+            //Store transaction to database
+            let transactionId;
+            try {
+                const dbResults = await db.query(`INSERT INTO \`coinsTransactions\` SET ?`, [{
+                    userId: this.getUser().getId(),
+                    amount,
+                    appId,
+                    comments
+                }]);
+                transactionId = dbResults.insertId;
+            } catch(error) {
+                reject(error);
+                return;
+            }
+
+            if (amount < 0)
+                this.take(Math.abs(amount));
+            else
+                this.give(amount);
+
+            resolve(transactionId);
+        });
     }
 }
 

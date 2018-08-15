@@ -205,7 +205,7 @@ class User {
      */
     async save() {
         const dbData = {
-            coinsBalance: this.getCoins().getCoinsBalance(),
+            coinsBalance: this.getCoins().getBalance(),
             created: this.getCreated()
         };
         this.setDataChanged(false);
