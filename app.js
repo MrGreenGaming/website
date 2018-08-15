@@ -56,28 +56,30 @@ class App {
 
         if (typeof(env[this.env]) !== 'object') {
             log.warn('No custom environment config set!');
-            this.config = env['base'];
+            global.Config = env['base'];
         } else
-            this.config = _.defaultsDeep(_.clone(env[this.env]), env['base']);
+            global.Config = _.defaultsDeep(_.clone(env[this.env]), env['base']);
 
-        if (!this.config.configReloadTimeSeconds)
-            return log.warn('No config reload time set. Will not reload.');
+        if (!Config.configReloadTimeSeconds) {
+            log.warn('No config reload time set. Reloading is disabled.');
+            return;
+        }
 
         setTimeout(() => {
             log.debug('Reloading server configuration');
             this.initConfig();
-        }, this.config.configReloadTimeSeconds * 1000);
+        }, Config.configReloadTimeSeconds * 1000);
     }
 
     static initDatabases() {
         return new Promise(async (resolve, reject) => {
             const Database = require('./base/database');
 
-            let dbConfig = this.config.databases.base;
+            let dbConfig = Config.databases.base;
             global.db = new Database(dbConfig.socket, dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.databaseName, dbConfig.connectionLimit);
 
 
-            dbConfig = this.config.databases.forums;
+            dbConfig = Config.databases.forums;
             global.forumsDb = new Database(dbConfig.socket, dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.databaseName, dbConfig.connectionLimit);
 
             try {
@@ -96,7 +98,7 @@ class App {
         const Express = require('express');
         this.express = Express();
         this.express.set('x-powered-by', false);
-        this.express.set('trust proxy', this.config.http.trustProxy ? 1 : 0);
+        this.express.set('trust proxy', Config.http.trustProxy ? 1 : 0);
 
         this.server = require('http').createServer(this.express);
 
@@ -119,20 +121,20 @@ class App {
         this.express.locals.layout = '/views/layouts/defaultLayout.marko';
 
         this.express.locals.site = {
-            title: this.config.site.title,
-            googleAnalyticsTrackingId: this.config.site.googleAnalyticsTrackingId,
+            title: Config.site.title,
+            googleAnalyticsTrackingId: Config.site.googleAnalyticsTrackingId,
             //description: '',
-            publicUrl: this.config.site.publicUrl
+            publicUrl: Config.site.publicUrl
         };
         this.express.locals.author = {
-            name: this.config.site.author.name,
-            emailAddress: this.config.site.author.emailAddress
+            name: Config.site.author.name,
+            emailAddress: Config.site.author.emailAddress
         };
     }
 
     static listenExpress() {
         return new Promise((resolve, reject) => {
-            this.server.listen(this.config.host.port, this.config.host.address);
+            this.server.listen(Config.host.port, Config.host.address);
             this.server.on('error', (error) => {
                 if (error.syscall !== 'listen')
                     throw error;

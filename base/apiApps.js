@@ -5,12 +5,12 @@ const reloadTime = 600;
 
 class ApiApps {
     /**
-     * Load games
+     * Load API Apps
      * @return {Promise<void>}
      */
     static load() {
         return new Promise(async (resolve, reject) => {
-            log.debug('Loading api apps');
+            log.debug('Loading API apps');
 
             let dbApiApps;
             try {
@@ -20,12 +20,31 @@ class ApiApps {
                 return;
             }
 
-            cachedApiApps.clear();
+            const removeApiAppIds = new Set(cachedApiApps.keys());
 
             for (const dbApiApp of dbApiApps) {
-                const apiApp = ApiApps.processDbApiApp(dbApiApp);
-                cachedApiApps.set(apiApp.getId(), apiApp);
+                const apiAppId = dbApiApp.appId;
+
+                let apiApp;
+                if (cachedApiApps.has(apiAppId)) {
+                    //Cache hit, use existing
+                    removeApiAppIds.delete(apiAppId); //Remove from removal list
+                    apiApp = cachedApiApps.get(apiAppId);
+                } else {
+                    //Cache miss, create new
+                    const ApiApp = require('../classes/apiApp');
+                    apiApp = new ApiApp(dbApiApp.appId);
+                    cachedApiApps.set(apiApp.getId(), apiApp);
+                }
+                apiApp.parseDb(dbApiApp);
             }
+
+            //Remove apps that are no longer in the database
+            for (const appApiId of removeApiAppIds) {
+                cachedApiApps.delete(appApiId);
+            }
+
+            log.info(`Loaded ${cachedApiApps.size} and removed ${removeApiAppIds.size} API Apps`);
 
             //Next reload
             setTimeout(async () => {
@@ -41,27 +60,21 @@ class ApiApps {
     }
 
     /**
-     * Process database game
-     * @private
-     * @param {object} dbApiApp
-     * @return {ApiApp} apiApp
-     */
-    static processDbApiApp(dbApiApp) {
-        const ApiApp = require('../classes/apiApp');
-        const apiApp = new ApiApp(dbApiApp.appId);
-        apiApp.parseDb(dbApiApp);
-
-        return apiApp;
-    }
-
-    /**
      * Get API app by id
      * @param {number} id
      * @return {ApiApp|void} apiApp
      */
     static get(id) {
         if (id)
-            cachedApiApps.get(id);
+            return cachedApiApps.get(id);
+    }
+
+    /**
+     * Get all API apps
+     * @return {Set<ApiApp>} apiApps
+     */
+    static getAll() {
+        return new Set(cachedApiApps.values());
     }
 }
 

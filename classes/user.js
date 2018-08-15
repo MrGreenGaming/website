@@ -123,9 +123,9 @@ class User {
         if (typeof(forumsDbResult.members_seo_name) === 'string' && forumsDbResult.members_seo_name)
             this.identifier = forumsDbResult.members_seo_name;
         if (typeof(forumsDbResult.pp_main_photo) === 'string' && forumsDbResult.pp_main_photo)
-            this.avatar = (!forumsDbResult.pp_main_photo.includes('://') ? config.url.avatars : '') + forumsDbResult.pp_main_photo;
+            this.avatar = (!forumsDbResult.pp_main_photo.includes('://') ? Config.url.avatars : '') + forumsDbResult.pp_main_photo;
         if (typeof(forumsDbResult.pp_thumb_photo) === 'string' && forumsDbResult.pp_thumb_photo)
-            this.avatarThumb = (!forumsDbResult.pp_thumb_photo.includes('://') ? config.url.avatars : '') + forumsDbResult.pp_thumb_photo;
+            this.avatarThumb = (!forumsDbResult.pp_thumb_photo.includes('://') ? Config.url.avatars : '') + forumsDbResult.pp_thumb_photo;
     }
 
     /**

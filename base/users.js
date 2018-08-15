@@ -29,7 +29,7 @@ class Users {
 
             const userId = forumsDbResult.member_id;
 
-            if (typeof(data.members_pass_hash) !== 'string') {
+            if (typeof(forumsDbResult.members_pass_hash) !== 'string') {
                 resolve();
                 return;
             }
@@ -44,14 +44,15 @@ class Users {
                 }
             } else {
                 //New algorithm
-                const bcrypt = require('bcrypt');
-                //console.log("Test1", password);
-                //console.log("Test2", password, data.members_pass_hash);
-                //console.log("Test3", password, data.members_pass_hash, bcrypt.compareSync(password, data.members_pass_hash));
+                const bcryptjs = require('bcryptjs');
+                /* Ok time to get serious: For whatever reason bcrypt can't handle these passwords while bcryptjs can. */
+                //log.debug('bcrypt test 1', password);
+                //log.debug('bcrypt test 2', password, forumsDbResult.members_pass_hash);
+                //log.debug('bcrypt test 3', password, forumsDbResult.members_pass_hash, bcrypt.compareSync(password, forumsDbResult.members_pass_hash));
 
                 let isMatch;
                 try {
-                    isMatch = await bcrypt.compare(password, forumsDbResult.members_pass_hash);
+                    isMatch = await bcryptjs.compare(password, forumsDbResult.members_pass_hash);
                 } catch (error) {
                     reject(error);
                     return;
@@ -132,7 +133,7 @@ class Users {
                 if (dbResults && dbResults.length)
                     dbUserResult = dbResults[0];
 
-                const forumsDbResults = config.forums.enabled ? await forumsDb.query(`SELECT \`member_id\`, \`name\`, \`joined\`, \`pp_main_photo\`, \`pp_thumb_photo\`, \`members_seo_name\` FROM \`x_utf_l4g_core_members\` WHERE \`member_id\` = ? LIMIT 0,1`, [id]) : undefined;
+                const forumsDbResults = Config.forums.enabled ? await forumsDb.query(`SELECT \`member_id\`, \`name\`, \`joined\`, \`pp_main_photo\`, \`pp_thumb_photo\`, \`members_seo_name\` FROM \`x_utf_l4g_core_members\` WHERE \`member_id\` = ? LIMIT 0,1`, [id]) : undefined;
                 if (forumsDbResults && forumsDbResults.length)
                     forumsDbUserResult = forumsDbResults[0];
             } catch (error) {
