@@ -12,10 +12,10 @@ router.all('/', async (req, res, next) => {
         });
     };
 
-    if (typeof(req.body.appId) !== 'string' || typeof(req.body.appSecret) !== 'string' || !req.body.appSecret)
+    if (typeof(req.body.appSecret) !== 'string' || !req.body.appSecret)
         return deny();
 
-    const appId = req.body.appId = parseInt(req.body.appId);
+    const appId = req.body.appId = typeof(req.body.appId) === 'number' ? req.body.appId : typeof(req.body.appId) === 'string' ? parseInt(req.body.appId, 10) : undefined;
     if (isNaN(appId))
         return deny();
 
