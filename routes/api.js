@@ -37,3 +37,6 @@ router.all('/', async (req, res, next) => {
 
     next();
 });
+
+router.use('/accounts', require('./api/account'));
+router.use('/users', require('./api/users'));

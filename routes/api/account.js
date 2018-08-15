@@ -1,3 +1,7 @@
+/**
+ * This is a legacy API end-point
+ */
+
 const Express = require('express');
 const router = module.exports = Express.Router(undefined);
 
@@ -46,7 +50,7 @@ router.post('/login', async (req, res) => {
             photoThumb: user.getAvatarThumb(),
             title: undefined //Deprecated
         },
-        greenCoins: user.getCoins().getBalance(),
+        coinsBalance: user.getCoins().getBalance(),
         joinDate: user.getCreated(),
         joinTimestamp: user.getCreated() ? Math.round(user.getCreated().getTime() / 1000) : undefined
     });
@@ -89,7 +93,7 @@ router.post('/details', async (req, res) => {
         emailAddress: undefined, //Deprecated
         joinDate: user.getCreated(),
         joinTimestamp: user.getCreated() ? Math.round(user.getCreated().getTime() / 1000) : undefined,
-        greenCoins: user.getCoins().getBalance(),
+        coinsBalance: user.getCoins().getBalance(),
         profile: {
             photo: user.getAvatar(),
             photoThumb: user.getAvatarThumb(),
