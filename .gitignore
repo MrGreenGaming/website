@@ -66,3 +66,4 @@ website.iml
 #Custom
 config/env.json
 *.marko.js
+tools/generateAppSecret.txt
