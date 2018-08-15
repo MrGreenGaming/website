@@ -1,7 +1,7 @@
 const Express = require('express');
 const router = module.exports = Express.Router(undefined);
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
     const template = require('../views/index.marko');
     res.marko(template, {
         page: {
@@ -9,11 +9,12 @@ router.get('/', (req, res, next) => {
             overrideTitle: true,
             description: 'Mr. Green Gaming is an online games community started in 2006. Several gameservers are hosted to players worldwide.',
             path: App.getExpressPath(req.baseUrl, req.path)
-        }
+        },
+        newsItems: CommunityNews.getItems()
     });
 });
 
-router.get('/about', (req, res, next) => {
+router.get('/about', (req, res) => {
     const template = require('../views/about.marko');
     res.marko(template, {
         page: {
@@ -24,7 +25,7 @@ router.get('/about', (req, res, next) => {
     });
 });
 
-router.get('/faq', (req, res, next) => {
+router.get('/faq', (req, res) => {
     const template = require('../views/faq.marko');
     res.marko(template, {
         page: {
@@ -35,7 +36,7 @@ router.get('/faq', (req, res, next) => {
     });
 });
 
-router.get('/greencoins', (req, res, next) => {
+router.get('/greencoins', (req, res) => {
     const template = require('../views/greencoins/index.marko');
     res.marko(template, {
         page: {

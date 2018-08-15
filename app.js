@@ -258,6 +258,7 @@ class App {
 
             global.Users = require('./base/users');
             global.Utils = require('./utils/utils');
+            global.CommunityNews = require('./base/communityNews');
 
             resolve();
         });

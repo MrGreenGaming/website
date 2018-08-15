@@ -1,21 +1,20 @@
 @import 'variables';
 
 main.index {
-  /*video, div.videoPlaceholder {
+  video {
     max-height: 40vh;
     display: block;
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
-  }*/
+  }
 
-  //Remove this once video is used again
-  div.videoPlaceholder {
+  div.video {
     background-color: lightgrey;
     display: block;
     width: 100%;
-    height: 300px;
-    max-height: 40vh;
+    height: 358px;
+    max-height: 53vw;
     margin: 1em 0;
   }
 }
