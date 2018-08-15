@@ -12,16 +12,22 @@ router.all('/', async (req, res, next) => {
         });
     };
 
-    if (typeof(req.body.appSecret) !== 'string' || !req.body.appSecret)
-        return deny();
+    if (typeof(req.body.appSecret) !== 'string' || !req.body.appSecret) {
+        deny();
+        return;
+    }
 
     const appId = req.body.appId = typeof(req.body.appId) === 'number' ? req.body.appId : typeof(req.body.appId) === 'string' ? parseInt(req.body.appId, 10) : undefined;
-    if (isNaN(appId))
-        return deny();
+    if (isNaN(appId)) {
+        deny();
+        return;
+    }
 
     const apiApp = ApiApps.get(appId);
-    if (!apiApp)
-        return deny();
+    if (!apiApp) {
+        deny();
+        return;
+    }
 
     let isMatch;
     try {
