@@ -1,7 +1,12 @@
 /** @type {Map<number, User>} */
 const cachedUsersById = new Map();
 
-const thinkTimeoutSeconds = 5;
+const thinkTimeoutSeconds = 10;
+
+const stats = {
+    created: 0,
+    invalidated: 0
+};
 
 class Users {
     /**
@@ -164,6 +169,7 @@ class Users {
 
             cachedUsersById.set(user.getId(), user);
 
+            stats.created++;
             log.debug(`Cached user #${user.getId()}`);
             resolve(user);
         });
@@ -184,8 +190,15 @@ class Users {
      * @param {User} user
      */
     static invalidate(user) {
+        if (user.isInvalidated()) {
+            log.warn('Attempted to invalidate an already invalidated user');
+            return;
+        }
+
         user.setInvalidated(true);
         cachedUsersById.delete(user.getId());
+
+        stats.invalidated++;
         log.debug(`Invalidated user #${user.getId()}`);
     }
 
@@ -203,3 +216,8 @@ class Users {
 setTimeout(() => Users.think(), thinkTimeoutSeconds * 1000);
 
 module.exports = Users;
+
+//Output users cache stats at defined interval
+setInterval(() => {
+    log.info(`Users cache stats: ${Users.getAllCached().size} active, ${stats.created} created, ${stats.invalidated} invalidated`);
+}, 5 * 60 * 1000);

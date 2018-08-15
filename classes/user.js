@@ -1,7 +1,7 @@
-const thinkTimeoutSeconds = 120;
-const cacheTimeoutSeconds = 60 * 10;
+const thinkTimeoutSeconds = 2 * 60;
+const cacheTimeoutSeconds = 10 * 60;
 if (cacheTimeoutSeconds <= thinkTimeoutSeconds)
-    log.error('cacheTimeoutSeconds needs to be a higher value than thinkTimeoutSeconds in user class!');
+    log.warn('cacheTimeoutSeconds needs to be a higher value than thinkTimeoutSeconds in user class');
 
 class User {
     /**
@@ -49,6 +49,8 @@ class User {
         /** @type {string|void}
          *  @private */
         this.identifier = undefined;
+
+        this.setNextThink();
     }
 
     /**
@@ -67,7 +69,7 @@ class User {
     setNextThink(date) {
         if (!(date instanceof Date)) {
             date = new Date();
-            date.setSeconds(date + thinkTimeoutSeconds);
+            date.setSeconds(date.getSeconds() + thinkTimeoutSeconds);
         }
 
         this.nextThink = date;
@@ -133,7 +135,7 @@ class User {
      * @return {Date} initializedDate
      */
     getInitialized() {
-       return this.initialized;
+        return this.initialized;
     }
 
     /**
@@ -206,13 +208,14 @@ class User {
     async save() {
         const dbData = {
             coinsBalance: this.getCoins().getBalance(),
-            created: this.getCreated()
+            created: this.getCreated(),
+            lastActivity: new Date()
         };
         this.setDataChanged(false);
 
         try {
             await db.query(`UPDATE \`users\` SET ? WHERE \`userId\` = ?`, [dbData, this.getId()]);
-        } catch(error) {
+        } catch (error) {
             log.error(error);
         }
     }
