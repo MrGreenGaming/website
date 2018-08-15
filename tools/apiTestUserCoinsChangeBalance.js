@@ -39,4 +39,3 @@ const run = async () => {
     console.info(`Result: ${JSON.stringify(results)}`);
 };
 run();
-

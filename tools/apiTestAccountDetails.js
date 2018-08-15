@@ -30,7 +30,7 @@ const run = async () => {
             },
             json: true
         });
-    } catch(error) {
+    } catch (error) {
         console.error(`Error ${error.statusCode}: ${JSON.stringify(error.error) || error.error}`);
         return;
     }
@@ -38,4 +38,3 @@ const run = async () => {
     console.info(`Result: ${JSON.stringify(results)}`);
 };
 run();
-
