@@ -37,8 +37,8 @@ class ApiApp {
      */
     verifySecretMatch(secret) {
         return new Promise((resolve, reject) => {
-            const bcrypt = require('bcrypt');
-            bcrypt.compare(secret, this.getSecretHash(), (error, isMatch) => {
+            const bcryptjs = require('bcryptjs');
+            bcryptjs.compare(secret, this.getSecretHash(), (error, isMatch) => {
                 if (error) {
                     reject(error);
                     return;

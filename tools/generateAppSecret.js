@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const saltWorkFactor = 10;
 
 const getRandomString = (charCount) => {
@@ -29,13 +29,13 @@ const writeData = (data) => {
 
 const pass = (typeof(process.argv[2]) === 'string' ? process.argv[2] : getRandomString(30));
 
-bcrypt.genSalt(saltWorkFactor, (error, salt) => {
+bcryptjs.genSalt(saltWorkFactor, (error, salt) => {
     if (error) {
         console.error(error);
         return;
     }
 
-    bcrypt.hash(pass, salt, (error, hash) => {
+    bcryptjs.hash(pass, salt, (error, hash) => {
         if (error) {
             console.error(error);
             return;
@@ -43,7 +43,7 @@ bcrypt.genSalt(saltWorkFactor, (error, salt) => {
 
         console.log('Hash:', hash);
 
-        bcrypt.compare(pass, hash, (error, isMatch) => {
+        bcryptjs.compare(pass, hash, (error, isMatch) => {
             if (error) {
                 console.error(error);
                 return;
