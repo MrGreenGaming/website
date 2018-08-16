@@ -108,6 +108,13 @@ class App {
         this.express.use(bodyParser.urlencoded({
             extended: false
         }));
+        //Fixes body being an array when coming from MTASA. Needs further investigation.
+        this.express.use('/', (req, res, next) => {
+            if (req.body instanceof Array && req.body.length === 1)
+                req.body = req.body[0];
+
+            next();
+        });
 
         //Cookie Parser
         const cookieParser = require('cookie-parser');

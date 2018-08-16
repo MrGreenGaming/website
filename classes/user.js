@@ -119,7 +119,7 @@ class User {
         if (dbResult.created instanceof Date)
             this.created = dbResult.created;
         if (typeof(dbResult.coinsBalance) === 'number')
-            this.coinsBalance = dbResult.coinsBalance;
+            this.getCoins().balance = dbResult.coinsBalance;
         if (typeof(forumsDbResult.name) === 'string' && forumsDbResult.name)
             this.name = forumsDbResult.name;
         if (typeof(forumsDbResult.members_seo_name) === 'string' && forumsDbResult.members_seo_name)
