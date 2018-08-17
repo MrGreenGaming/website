@@ -17,9 +17,11 @@ class Users {
      */
     static authenticate(username, password) {
         return new Promise(async (resolve, reject) => {
+            username = username.toLowerCase();
+
             let forumsDbResult;
             try {
-                const results = await forumsDb.query('SELECT `member_id`, `members_pass_hash`, `members_pass_salt` FROM `x_utf_l4g_core_members` WHERE (`email` = ? OR `name` = ?) LIMIT 0,1', [username, username]);
+                const results = await forumsDb.query('SELECT `member_id`, `members_pass_hash`, `members_pass_salt` FROM `x_utf_l4g_core_members` WHERE (LOWER(`email`) = ? OR LOWER(`name`) = ?) LIMIT 0,1', [username, username]);
                 if (results && results.length)
                     forumsDbResult = results[0];
             } catch (error) {
