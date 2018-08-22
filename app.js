@@ -96,44 +96,64 @@ class App {
 
     static initExpress() {
         const Express = require('express');
-        this.express = Express();
-        this.express.set('x-powered-by', false);
-        this.express.set('trust proxy', Config.http.trustProxy ? 1 : 0);
+        const express = this.express = Express();
+        express.set('x-powered-by', false);
+        express.set('trust proxy', Config.http.trustProxy ? 1 : 0);
 
-        this.server = require('http').createServer(this.express);
+        this.server = require('http').createServer(express);
 
         //Body Parser
         const bodyParser = require('body-parser');
-        this.express.use(bodyParser.json());
-        this.express.use(bodyParser.urlencoded({
+        express.use(bodyParser.json());
+        express.use(bodyParser.urlencoded({
             extended: false
         }));
         //Fixes body being an array when coming from MTASA. Needs further investigation.
-        this.express.use('/', (req, res, next) => {
+        express.use('/', (req, res, next) => {
             if (req.body instanceof Array && req.body.length === 1)
                 req.body = req.body[0];
 
             next();
         });
 
-        //Cookie Parser
-        const cookieParser = require('cookie-parser');
-        this.express.use(cookieParser());
+        //Sessions
+        const session = require('express-session');
+        const mySqlStore = require('express-mysql-session')(session);
+        const sessionStore = new mySqlStore({
+            createDatabaseTable: true,
+            charset: 'utf8mb4_general_ci',
+            schema: {
+                tableName: 'sessions',
+                columnNames: {
+                    session_id: 'sessionId',
+                    expires: 'expires',
+                    data: 'data'
+                }
+            }
+        }, db.getPool());
+        express.use(session({
+            secret: Config.http.cookieSecret,
+            secure: Config.http.cookieSecure,
+            resave: false,
+            store: sessionStore,
+            saveUninitialized: false,
+            name: 'mrgreen'
+        }));
 
-        //Engine
+        //Marko render engine
         require('marko/node-require').install();
         const markoExpress = require('marko/express'); //enable res.marko
-        this.express.use(markoExpress());
+        express.use(markoExpress());
+        express.locals.layout = '/views/layouts/defaultLayout.marko';
 
-        this.express.locals.layout = '/views/layouts/defaultLayout.marko';
-
-        this.express.locals.site = {
+        //Set Marko globals
+        express.locals.site = {
             title: Config.site.title,
             googleAnalyticsTrackingId: Config.site.googleAnalyticsTrackingId,
             //description: '',
             publicUrl: Config.site.publicUrl
         };
-        this.express.locals.author = {
+        express.locals.author = {
             name: Config.site.author.name,
             emailAddress: Config.site.author.emailAddress
         };

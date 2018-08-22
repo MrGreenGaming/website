@@ -122,6 +122,14 @@ class Database {
             log.trace('Executed DB query', query.sql);
         });
     }
+
+    /**
+     * Get connections pool
+     * @return {Pool} pool
+     */
+    getPool() {
+        return this.pool;
+    }
 }
 
 //Export class

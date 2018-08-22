@@ -1,6 +1,6 @@
 {
   "name": "mrgreen-website",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "scripts": {
     "start": "cross-env NODE_ENV=development node app.js | bunyan",
@@ -20,8 +20,9 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "~1.18.3",
     "bunyan": "^1.8.12",
-    "cookie-parser": "~1.4.3",
     "express": "~4.16.3",
+    "express-mysql-session": "^2.0.1",
+    "express-session": "^1.15.6",
     "feedparser": "^2.2.9",
     "jsonfile": "^4.0.0",
     "lodash": "^4.17.10",
