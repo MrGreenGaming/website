@@ -203,6 +203,7 @@ class App {
         });
 
         this.express.use('/', require('./routes/static'));
+        this.express.use('/account', require('./routes/account'));
         this.express.use('/games', require('./routes/games'));
         this.express.use('/api', require('./routes/api'));
 
