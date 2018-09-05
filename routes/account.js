@@ -1,31 +1,24 @@
 const Express = require('express');
 const router = module.exports = Express.Router(undefined);
 
-router.use('/', async (req, res, next) => {
-    const userId = req.session.userId;
-    if (typeof(userId) === 'number' && !req.user) {
-        try {
-            req.user = await Users.get(userId);
-        } catch(error) {
-            log.warn(error);
-        }
+router.get('/', (req, res) => {
+    if (!req.user) {
+        res.redirect('./login');
+        return;
     }
 
-    next();
-});
-
-router.get('/', (req, res, next) => {
     const template = require('../views/account/index.marko');
     res.marko(template, {
         page: {
             title: 'Account',
             description: 'Manage your Mr. Green Gaming community account.',
             path: App.getExpressPath(req.baseUrl, req.path)
-        }
+        },
+        user: req.user
     });
 });
 
-router.get('/login', (req, res, next) => {
+router.get('/login', (req, res) => {
     if (req.user) {
         res.redirect('./');
         return;

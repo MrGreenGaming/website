@@ -1,8 +1,14 @@
 <include('../layouts/layout.marko', data)>
     <@body>
 <main>
-        <h1>Account</h1>
-        <p class="lead">At ${out.global.site.title} we play various PC games. Here's an overview of the games we're active in.</p>
+        <h1>Hi ${data.user.getName()}! - <a href="./logout"><i>Log Out</i></a></h1>
+        <p class="lead">If you would like to change your username or password you can do that on the Forums.</p>
+        <h2>GreenCoins</h2>
+        <!--Card with info-->
+        <h2>Account</h2>
+        <!--Password change and such-->
+        <h2>History</h2>
+        <!--Account history: Soon-->
 </main>
     </@body>
 </include>

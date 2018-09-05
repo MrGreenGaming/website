@@ -123,7 +123,7 @@ class Users {
      */
     static get(id) {
         return new Promise(async (resolve, reject) => {
-            if (typeof(id) !== 'number' || !id) {
+            if (typeof(id) !== 'number' || !id || isNaN(id)) {
                 resolve();
                 return;
             }

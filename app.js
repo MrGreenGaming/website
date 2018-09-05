@@ -202,6 +202,20 @@ class App {
                 next();
         });
 
+        //Get user when logged in
+        this.express.use('/', async (req, res, next) => {
+            const userId = req.session.userId;
+            if (typeof(userId) === 'number' && !req.user) {
+                try {
+                    req.user = await Users.get(userId);
+                } catch(error) {
+                    log.warn(error);
+                }
+            }
+
+            next();
+        });
+
         this.express.use('/', require('./routes/static'));
         this.express.use('/account', require('./routes/account'));
         this.express.use('/games', require('./routes/games'));
