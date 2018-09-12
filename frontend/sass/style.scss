@@ -1,5 +1,10 @@
 //Normalize
-@import '../../node_modules/normalize.css/normalize';
+//@import '../../node_modules/normalize.css/normalize';
+
+//Bulmaswatch
+@import '../../node_modules/bulmaswatch/materia/variables';
+@import '../../node_modules/bulma/bulma';
+@import '../../node_modules/bulmaswatch/materia/overrides';
 
 //Polyfill
 //@import '../../node_modules/dialog-polyfill/dialog-polyfill'; //HTML dialog element polyfill
