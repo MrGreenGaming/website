@@ -2,7 +2,7 @@
 //@import '../../node_modules/normalize.css/normalize';
 
 //Bulmaswatch
-@import '../../node_modules/bulmaswatch/materia/variables';
+@import './app/variables';
 @import '../../node_modules/bulma/bulma';
 @import '../../node_modules/bulmaswatch/materia/overrides';
 
@@ -11,8 +11,8 @@
 
 @import 'app/layout';
 @import 'app/main';
-@import 'app/misc';
+//@import 'app/misc';
 
 //Pages
-@import 'app/index';
-@import 'app/game';
+//@import 'app/index';
+//@import 'app/game';

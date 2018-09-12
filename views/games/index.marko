@@ -1,6 +1,6 @@
 <include('../layouts/layout.marko', data)>
     <@body>
-<main class="games">
+<main class="container games">
         <h1>Games We Play</h1>
         <p class="lead">At ${out.global.site.title} we play various PC games. Here's an overview of the games we're active in.</p>
         <for(game in Array.from(data.games))>

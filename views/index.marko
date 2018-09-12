@@ -1,39 +1,44 @@
 <include('./layouts/layout.marko', data)>
     <@body>
-<main class="flex index">
-    <section>
-        <!--<video autoplay muted loop poster="/assets/videos/home.png">
-            <source src="/assets/videos/home.mp4" type="video/mp4">
-        </video>-->
-        <div class="video">
-            <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/Z-Fw0Ou6u7A?rel=0&amp;showinfo=0&amp;start=39&amp;autoplay=1&amp;mute=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-        <h1>Mr. Green in short</h1>
-        <p><em>Mr. Green Gaming</em> is an online games community founded back in 2006. We host gameservers for various games such as <a href="/games/multi-theft-auto">Multi Theft Auto: San Andreas</a>, <a href="/games/garrysmod">Garry's Mod</a> and more. Everyone is welcome to play on our public servers or by joining an upcoming online event.</p>
-    </section>
-    <aside>
-        <div>
-            <h2 class="h1">Monthly GreenCoins payment goal</h2>
-            <div class="progressBar">
-                <div style="width: 50%;"></div>
+<main class="container">
+    <div class="tile is-ancestor">
+        <div class="tile is-vertical is-parent">
+            <div class="tile is-child">
+                <div class="video">
+                    <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/Z-Fw0Ou6u7A?rel=0&amp;showinfo=0&amp;start=39&amp;autoplay=1&amp;mute=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+                    </iframe>
+                </div>
             </div>
-            <p>€0,00 of €95,00</p>
-            <p>Help us reach the monthly goal in order to pay for our expenses, such as server hosting bills.</p>
+            <div class="tile is-child box">
+                <h1 class="title">Mr. Green in short</h1>
+                <p>
+                    <em>Mr. Green Gaming</em> is an online games community founded back in 2006. We host gameservers for various games such as <a href="/games/multi-theft-auto">Multi Theft Auto: San Andreas</a>, <a href="/games/garrysmod">Garry's Mod</a> and more. Everyone is welcome to play on our public servers or by joining an upcoming online event.
+                </p>
+            </div>
         </div>
-        <h2>Latest Community News</h2>
-        <ul>
+        <div class="tile is-4 is-vertical is-parent">
+            <div class="tile is-child box">
+                <h2 class="h1 title">Monthly GreenCoins payment goal</h2>
+                <p>€0,00 of €95,00</p>
+                <p>Help us reach the monthly goal in order to pay for our expenses, such as server hosting bills.</p>
+            </div>
+            <div class="tile is-child box">
+                <h2 class="subtitle">Latest Community News</h2>
+                <ul>
 $ {
     const newsItems = [...data.newsItems];
     if (newsItems.length > 5)
         newsItems.length = 5;
 }
-            <for(newsItem in newsItems)>
-                <li><a href="${newsItem.link}" title="View ${newsItem.title} on the Forums">${newsItem.title}</a></li>
-            </for>
-        </ul>
-        <!--<h2>Upcoming event: Sven Co-Op</h2>
-        <p>On August the 9th we will be playing the free of charge game Sven Co-Op. <a href="/events/32-sven-coop">Read more about this upcoming event…</a></p>-->
-    </aside>
+                    <for(newsItem in newsItems)>
+                        <li><a href="${newsItem.link}" title="View ${newsItem.title} on the Forums">${newsItem.title}</a></li>
+                    </for>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<h2>Upcoming event: Sven Co-Op</h2>
+    <p>On August the 9th we will be playing the free of charge game Sven Co-Op. <a href="/events/32-sven-coop">Read more about this upcoming event…</a></p>-->
 </main>
     </@body>
 </include>
