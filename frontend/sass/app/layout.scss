@@ -1,6 +1,30 @@
 @import 'variables';
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
 
+@mixin respond-to($media) {
+  @if $media == small-screens {
+    @media only screen and (max-width: $break-small) {
+      @content;
+    }
+  } @else if $media == medium-screens {
+    @media only screen and (min-width: $break-small + 1) and (max-width: $break-large - 1) {
+      @content;
+    }
+  } @else if $media == medium-wide-screens {
+    @media only screen and (min-width: $break-small + 1) {
+      @content;
+    }
+  } @else if $media == wide-screens {
+    @media only screen and (min-width: $break-large) {
+      @content;
+    }
+  } @else {
+    @media only screen and (min-width: $media) {
+      @content;
+    }
+  }
+}
+
 html, body {
   height: 100%;
 }
@@ -11,30 +35,66 @@ body {
 }
 
 main,
+footer > div {
+  width: calc(100% - 1em);
+}
+
+main,
 nav,
 footer > div {
-  width: calc(100% - 20px);
-  max-width: 936px;
+  max-width: $body-max-width;
   margin: 0 auto 0 auto;
 }
 
 header {
-  background: linear-gradient(90deg, $primary-dark-color 0%, $primary-color 100%);
+  background-image: url(../media/bg.jpg);
+  background-size: contain;
+  background-position-y: 55%;
   width: 100%;
+  overflow-x: hidden;
 
   > nav {
+    background: linear-gradient(90deg, rgba($primary-dark-color, .8) 0%, rgba($primary-color, .8) 100%);
+    padding: 0 1em;
+    
+    @media only screen and (max-width: calc(#{$break-large} + 1em - 1px)) {
+      box-sizing: border-box;
+    }
+
+    @media only screen and (min-width: calc(#{$break-large} + 1em)) {
+
+      transform: skew(20deg);
+
+      > * {
+        transform: skew(-20deg);
+      }
+    }
+
     //align-items: center;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 
-    > a, > span {
+    > a, > span, > div, > div > a {
       display: flex;
       align-items: center;
 
       margin: 0 0.2em;
-      padding: 0.3em 0;
 
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    > a, > span {
+      padding: 0.3em 0;
+    }
+
+    > a, > span, > div {
       &.brand {
         &, > img {
           $logo-size: 64px;
@@ -49,10 +109,6 @@ header {
       color: $nav-item-color;
       //margin-left: 20px;
 
-      &:first-child {
-        margin-left: 0;
-      }
-
       &.separator {
         height: 26px;
         width: 2px;
@@ -66,7 +122,11 @@ header {
       }
     }
 
-    > a {
+    > div > a {
+      align-self: stretch;
+    }
+
+    > a, > div > a {
       border-bottom: 2px solid transparent;
       text-decoration: none;
 

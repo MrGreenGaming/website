@@ -1,9 +1,12 @@
 const Express = require('express');
-const router = module.exports = Express.Router(undefined);
+const router = module.exports = Express.Router({
+    strict: App.express.get('strict routing'),
+    caseSensitive: App.express.get('case sensitive routing')
+});
 
 router.get('/', (req, res) => {
     if (!req.user) {
-        res.redirect('./login');
+        res.redirect('./account/login');
         return;
     }
 
@@ -54,7 +57,7 @@ router.post('/login', async (req, res, next) => {
         delete req.session.userId;
     }
 
-    if(/application\/json;/.test(req.get('accept'))) {
+    if (/application\/json;/.test(req.get('accept'))) {
         res.json({
             loggedIn: !!user
         });

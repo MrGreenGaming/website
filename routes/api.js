@@ -1,5 +1,8 @@
 const Express = require('express');
-const router = module.exports = Express.Router(undefined);
+const router = module.exports = Express.Router({
+    strict: App.express.get('strict routing'),
+    caseSensitive: App.express.get('case sensitive routing')
+});
 
 router.use((error, req, res, next) => {
     if (!error.status)

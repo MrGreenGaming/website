@@ -2,7 +2,7 @@
 
 main {
   &.flex {
-    @media only screen and (min-width: 760px) {
+    @include respond-to(medium-wide-screens) {
       display: flex;
       justify-content: space-between;
 

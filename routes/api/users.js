@@ -1,5 +1,8 @@
 const Express = require('express');
-const router = module.exports = Express.Router(undefined);
+const router = module.exports = Express.Router({
+    strict: App.express.get('strict routing'),
+    caseSensitive: App.express.get('case sensitive routing')
+});
 
 router.param('userId', async (req, res, next, userId) => {
     userId = parseInt(userId, 10);
@@ -13,7 +16,7 @@ router.param('userId', async (req, res, next, userId) => {
 
     try {
         req.user = await Users.get(userId);
-    } catch(error) {
+    } catch (error) {
         log.error(error);
         res.json({
             error: 0,
@@ -104,7 +107,7 @@ router.post('/:userId/coins/submitTransaction', async (req, res) => {
     let coinsTransactionId;
     try {
         coinsTransactionId = await user.getCoins().submitTransaction(amount, req.appId, comments);
-    } catch(error) {
+    } catch (error) {
         res.status(500);
         res.json({
             error: 0,

@@ -97,8 +97,10 @@ class App {
     static initExpress() {
         const Express = require('express');
         const express = this.express = Express();
-        express.set('x-powered-by', false);
-        express.set('trust proxy', Config.http.trustProxy ? 1 : 0);
+        express.disable('x-powered-by');
+        express.set('trust proxy', Config.http.trustProxy);
+        express.enable('strict routing');
+        express.enable('case sensitive routing');
 
         this.server = require('http').createServer(express);
 
@@ -193,10 +195,11 @@ class App {
             etag: !App.isDevelopment
         }));
 
-        //Redirect trailing slash requests
+        //Remove trailing slash
         this.express.use((req, res, next) => {
-            if (req.path.substr(-1) === '/' && req.path.length > 1) {
-                const query = req.url.slice(req.path.length);
+            const pathLength = req.path.length;
+            if (pathLength > 1 && req.path.lastIndexOf('/') === (pathLength - 1)) {
+                const query = req.url.slice(pathLength);
                 res.redirect(301, req.path.slice(0, -1) + query);
             } else
                 next();
