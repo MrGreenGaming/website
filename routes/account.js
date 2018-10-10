@@ -6,7 +6,7 @@ const router = module.exports = Express.Router({
 
 router.get('/', (req, res) => {
     if (!req.user) {
-        res.redirect('./account/login');
+        res.redirect('./login');
         return;
     }
 

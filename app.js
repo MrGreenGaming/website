@@ -97,10 +97,10 @@ class App {
     static initExpress() {
         const Express = require('express');
         const express = this.express = Express();
-        express.disable('x-powered-by');
-        express.set('trust proxy', Config.http.trustProxy);
         express.enable('strict routing');
         express.enable('case sensitive routing');
+        express.disable('x-powered-by');
+        express.set('trust proxy', Config.http.trustProxy);
 
         this.server = require('http').createServer(express);
 
@@ -195,16 +195,6 @@ class App {
             etag: !App.isDevelopment
         }));
 
-        //Remove trailing slash
-        this.express.use((req, res, next) => {
-            const pathLength = req.path.length;
-            if (pathLength > 1 && req.path.lastIndexOf('/') === (pathLength - 1)) {
-                const query = req.url.slice(pathLength);
-                res.redirect(301, req.path.slice(0, -1) + query);
-            } else
-                next();
-        });
-
         //Get user when logged in
         this.express.use('/', async (req, res, next) => {
             const userId = req.session.userId;
@@ -220,9 +210,26 @@ class App {
         });
 
         this.express.use('/', require('./routes/static'));
-        this.express.use('/account', require('./routes/account'));
-        this.express.use('/games', require('./routes/games'));
-        this.express.use('/api', require('./routes/api'));
+
+        //Strict routing redirects
+        this.express.get(['/games', '/account', '/api'], (req, res) => {
+            const query = req.url.slice(req.path.length);
+            res.redirect(301, req.path + '/' + query);
+        });
+
+        this.express.use('/account/', require('./routes/account'));
+        this.express.use('/games/', require('./routes/games'));
+        this.express.use('/api/', require('./routes/api'));
+
+        //Remove trailing slash if not found
+        this.express.use((req, res, next) => {
+            const pathLength = req.path.length;
+            if (pathLength > 1 && req.path.lastIndexOf('/') === (pathLength - 1)) {
+                const query = req.url.slice(pathLength);
+                res.redirect(301, req.path.slice(0, -1) + query);
+            } else
+                next();
+        });
 
         //Error Handler is our last stop
         this.express.use((req, res, next) => {
