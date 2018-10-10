@@ -16,6 +16,13 @@ form {
     &[type=submit] {
       background-color: $primary-dark-color;
       color: #FFF;
+      cursor: pointer;
+      transition: all .1s ease-in;
+
+      &:hover {
+        background-color: lighten($primary-dark-color, 5);
+        text-decoration: underline;
+      }
     }
 
     font-size: 1.1em;
