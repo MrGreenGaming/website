@@ -1,0 +1,23 @@
+@import 'variables';
+
+form {
+  > b, > input {
+    display: block;
+    width: 100%;
+  }
+
+  > input {
+    border: .05em solid rgba(#000, 0.2);
+    border-radius: 0.25em;
+    box-sizing: border-box;
+    padding: .8em .5em;
+    margin: .5em 0;
+
+    &[type=submit] {
+      background-color: $primary-dark-color;
+      color: #FFF;
+    }
+
+    font-size: 1.1em;
+  }
+}

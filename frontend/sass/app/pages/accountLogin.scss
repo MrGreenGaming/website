@@ -1,0 +1,5 @@
+@import '../variables';
+
+main.account.login {
+  max-width: calc(#{$body-max-width} / 2);
+}

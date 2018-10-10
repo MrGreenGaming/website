@@ -7,7 +7,9 @@
 @import 'app/layout';
 @import 'app/main';
 @import 'app/misc';
+@import 'app/form';
 
 //Pages
-@import 'app/index';
-@import 'app/game';
+@import 'app/pages/index';
+@import 'app/pages/game';
+@import 'app/pages/accountLogin';

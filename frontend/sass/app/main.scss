@@ -1,6 +1,10 @@
 @import 'variables';
 
 main {
+  &.small {
+    max-width: calc(#{$body-max-width} / 2);
+  }
+
   &.flex {
     @include respond-to(medium-wide-screens) {
       display: flex;

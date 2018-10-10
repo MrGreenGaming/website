@@ -56,7 +56,7 @@ header {
   > nav {
     background: linear-gradient(90deg, rgba($primary-dark-color, .8) 0%, rgba($primary-color, .8) 100%);
     padding: 0 1em;
-    
+
     @media only screen and (max-width: calc(#{$break-large} + 1em - 1px)) {
       box-sizing: border-box;
     }

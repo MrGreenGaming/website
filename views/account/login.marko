@@ -1,14 +1,17 @@
 <include('../layouts/layout.marko', data)>
     <@body>
-<main>
+<main class="account login">
         <h1>Account Login</h1>
         <p class="lead">Please login to your ${out.global.site.title} account.</p>
-        <p>No account yet? <a href="https://mrgreengaming.com/forums/register/">Register on our Forums</a>.</p>
+        <p>No account yet? <a href="https://mrgreengaming.com/forums/register/">Register on our Forums.</a></p>
         <form method="post" action="./login">
-            <b>Username/Emailaddress</b> <input type="text" name="user"><br>
-            <b>Password</b> <input type="password" name="password"><br>
+            <b>Username/Emailaddress</b>
+            <input type="text" name="user" length="50">
+            <b>Password</b>
+            <input type="password" name="password" length="80">
             <input type="submit" value="Login">
         </form>
+        <p><a href="https://mrgreengaming.com/forums/lostpassword/">Forgot your password?</a></p>
 </main>
     </@body>
 </include>
