@@ -212,13 +212,14 @@ class App {
         this.express.use('/', require('./routes/static'));
 
         //Strict routing redirects
-        this.express.get(['/games', '/account', '/api'], (req, res) => {
+        this.express.get(['/games', '/account', '/greencoins', '/api'], (req, res) => {
             const query = req.url.slice(req.path.length);
             res.redirect(301, req.path + '/' + query);
         });
 
         this.express.use('/account/', require('./routes/account'));
         this.express.use('/games/', require('./routes/games'));
+        this.express.use('/greencoins/', require('./routes/greencoins'));
         this.express.use('/api/', require('./routes/api'));
 
         //Remove trailing slash if not found

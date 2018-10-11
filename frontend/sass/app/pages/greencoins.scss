@@ -1,0 +1,23 @@
+@import '../variables';
+
+main.greencoins {
+  &.buy {
+    max-width: calc(#{$body-max-width} / 2);
+
+    form {
+      > div {
+        display: flex;
+        align-items: center;
+
+        > input {
+          flex-grow: 1;
+        }
+
+        > .currency {
+          margin-right: .5em;
+          font-size: 1.1em;
+        }
+      }
+    }
+  }
+}

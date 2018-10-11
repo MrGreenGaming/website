@@ -23,3 +23,10 @@ for (const el of document.querySelectorAll('.fromNow')) {
     if (el.classList.contains('titleDate'))
         el.setAttribute('title', moment.format(el.dataset.format));
 }
+
+const mainElement = document.querySelector('main');
+if (mainElement) {
+    if (mainElement.classList.contains('greencoins')) {
+        const greenCoins = require('./pages/greencoins');
+    }
+}

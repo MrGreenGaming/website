@@ -1,0 +1,17 @@
+<include('../layouts/layout.marko', data)>
+    <@body>
+<main class="greencoins buy">
+        <h1>Buy GreenCoins</h1>
+        <p class="lead">Thank you for showing interest in supporting the community by buying GreenCoins.</p>
+        <p>All payments are in euros as Mr. Green is based in The Netherlands (Europe). Most payment methods allow you to pay in your local currency. <a href="https://www.xe.com/currency/eur-euro" target="_blank" title="Euro exchange rates on Xe.com">View euro exchange rates on Xe.com.</a></p>
+        <form method="post" action="./buy">
+            <b>Amount in euros</b>
+            <div><span class="currency">&euro;</span><input name="amount" type="number" min="${data.amounts.min}" step="0.01" max="${data.amounts.max}" value="${data.amounts.default}"></div>
+            <b>GreenCoins in exchange</b>
+            <input type="input" name="greencoins" readonly="readonly" value="" data-exchange-rate="${data.exchangeRate}">
+            <input type="submit" value="Process payment">
+        </form>
+        <p>Having troubles buying GreenCoins? <a href="/faq">Read the FAQ or contact us.</a></p>
+</main>
+    </@body>
+</include>

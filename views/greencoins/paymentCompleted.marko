@@ -1,0 +1,23 @@
+<include('../layouts/layout.marko', data)>
+    <@body>
+<main class="greencoins payment completed">
+        <h1>GreenCoins payment information</h1>
+        <if(data.status === 'open')>
+            <p class="lead">Your payment is pending. If you just finished the payment then expect to receive your ${data.greenCoinsAmount.toLocaleString()} GC within a few minutes. Please note that you might need to reconnect to the game server in order to update your current balance.</p>
+        </if>
+        <else-if(data.status === 'paid')>
+            <p class="lead">We've received your payment. You can expect to receive your ${data.greenCoinsAmount.toLocaleString()} GC within a few minutes. Please note that you might need to reconnect to the game server in order to update your current balance.</p>
+        </else-if>
+        <else-if(data.status === 'canceled')>
+            <p class="lead">The payment has been canceled.</p>
+        </else-if>
+        <else-if(data.status === 'expired')>
+            <p class="lead">Your payment has expired. Please finish your order in time.</p>
+        </else-if>
+        <else>
+            <p class="lead">The status of your payment is currently not known. This is most likely a temporary problem.</p>
+        </else>
+        <p>Having troubles buying GreenCoins? <a href="/faq">Read the FAQ or contact us.</a> <a href="./buy">Start a new payment.</a></p>
+</main>
+    </@body>
+</include>

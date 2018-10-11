@@ -1,0 +1,25 @@
+<include('../layouts/layout.marko', data)>
+    <@body>
+<main class="greencoins payment failed">
+        <h1>GreenCoins payment failed</h1>
+        <p class="lead">
+            <if(data.reason === 'psp')>
+                Problems with payment service provider.
+            </if>
+            <else-if(data.reason === 'amountNaN')>
+                The entered amount is not a valid number.
+            </else-if>
+            <else-if(data.reason === 'minAmount')>
+                The entered amount is less than the minimum.
+            </else-if>
+            <else-if(data.reason === 'maxAmount')>
+                The entered amount is more than the maximum.
+            </else-if>
+            <else>
+                Internal server error.
+            </else>
+        </p>
+        <p>Although we're not sure if it'll work next time: <a href="../buy">Please try again.</a></p>
+</main>
+    </@body>
+</include>
