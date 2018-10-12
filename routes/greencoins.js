@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 router.get('/buy', (req, res) => {
     if (!req.user) {
-        res.redirect('/account');
+        res.redirect(401, '/account');
         return;
     }
 
@@ -23,6 +23,28 @@ router.get('/buy', (req, res) => {
         page: {
             title: 'Buy GreenCoins',
             description: 'Buy GreenCoins and spend them in our game servers.',
+            path: App.getExpressPath(req.baseUrl, req.path)
+        },
+        amounts: {
+            min: Config.mollie.minAmount,
+            max: Config.mollie.maxAmount,
+            default: Config.mollie.defaultAmount,
+        },
+        exchangeRate: Config.mollie.gcExchangeRate
+    });
+});
+
+router.get('/payments', (req, res) => {
+    if (!req.user) {
+        res.redirect(401, '/account');
+        return;
+    }
+
+    const template = require('../views/greencoins/payments.marko');
+    res.marko(template, {
+        page: {
+            title: 'GreenCoins payments overview',
+            description: 'An overview Buy GreenCoins and spend them in our game servers.',
             path: App.getExpressPath(req.baseUrl, req.path)
         },
         amounts: {
@@ -43,6 +65,92 @@ router.get('/payment/failed', (req, res) => {
             path: App.getExpressPath(req.baseUrl, req.path)
         },
         reason: req.query.reason
+    });
+});
+
+router.post('/payment/webhook', async (req, res) => {
+    if (!req.body || typeof(req.body.id) !== 'string') {
+        res.status(500);
+        res.json({
+            error: 1
+        });
+        log.warn(new Error('Invalid post data in Mollie webhook'));
+        return;
+    }
+
+    const mollieIdentifier = req.body.id;
+
+    let payment;
+    try {
+        const results = await db.query(`SELECT \`paymentId\`, \`parentUserId\`, \`status\`, \`greenCoinsAmount\` FROM \`coinsPayments\` WHERE \`mollieIdentifier\` = ? LIMIT 0,1`, [mollieIdentifier]);
+        if (results && results[0])
+            payment = results[0];
+    } catch (error) {
+        res.status(500);
+        res.json({
+            error: 0
+        });
+        log.error(error);
+        return;
+    }
+
+    if (!payment) {
+        res.status(404);
+        res.json({
+            error: 2,
+            errorMessage: 'Unable to find transaction'
+        });
+        log.warn(new Error('Invalid Mollie identifier'));
+        return;
+    }
+
+    let molliePayment;
+    try {
+        molliePayment = await mollie.payments.get(payment.mollieIdentifier);
+    } catch (error) {
+        log.warn(error);
+        res.redirect('./payment/failed?reason=psp');
+        return;
+    }
+
+    if (!molliePayment) {
+        res.redirect('./payment/failed?reason=psp');
+        return;
+    }
+
+    if (payment.status !== molliePayment.status) {
+        //Status changed
+        try {
+            await db.query(`UPDATE \`coinsPayments\` SET \`status\` = ? WHERE \`paymentId\` = ?`, [payment.paymentId]);
+        } catch (error) {
+            res.status(500);
+            res.json({
+                error: 0
+            });
+            log.error(error);
+            return;
+        }
+
+        if (payment.isPaid()) {
+            let coinsTransactionId;
+            try {
+                const user = await Users.get(payment.parentUserId);
+                if (user)
+                    coinsTransactionId = await user.getCoins().submitTransaction(payment.greenCoinsAmount, undefined, `Payment order #${payment.paymentId}`);
+            } catch (error) {
+                res.status(500);
+                res.json({
+                    error: 0,
+                    errorMessage: 'Transaction error'
+                });
+                log.error(error);
+                return;
+            }
+        }
+    }
+
+    res.json({
+        success: true
     });
 });
 
@@ -78,7 +186,7 @@ router.get('/payment', async (req, res) => {
         const paymentId = parseInt(req.query.paymentId);
         if (!isNaN(paymentId)) {
             try {
-                const results = await db.query(`SELECT \`parentUserId\`, \`status\`, \`mollieIdentifier\`, \`greenCoinsAmount\` FROM \`coinsPayments\` WHERE \`paymentId\` = ?`, [paymentId]);
+                const results = await db.query(`SELECT \`parentUserId\`, \`status\`, \`mollieIdentifier\`, \`greenCoinsAmount\` FROM \`coinsPayments\` WHERE \`paymentId\` = ? LIMIT 0,1`, [paymentId]);
                 if (results && results[0])
                     payment = results[0];
             } catch (error) {
@@ -100,7 +208,7 @@ router.get('/payment', async (req, res) => {
         let molliePayment;
         try {
             molliePayment = await mollie.payments.get(payment.mollieIdentifier);
-        } catch(error) {
+        } catch (error) {
             log.warn(error);
             res.redirect('./payment/failed?reason=psp');
             return;
@@ -111,12 +219,7 @@ router.get('/payment', async (req, res) => {
             return;
         }
 
-        if (molliePayment.isCanceled())
-            templateData.status = 'canceled';
-        else if (molliePayment.isExpired())
-            templateData.status = 'expired';
-        else if (molliePayment.isPaid())
-            templateData.status = 'paid';
+        templateData.status = molliePayment.status;
     }
 
     const template = require('../views/greencoins/paymentCompleted.marko');
@@ -125,7 +228,7 @@ router.get('/payment', async (req, res) => {
 
 router.post('/buy', async (req, res, next) => {
     if (!req.user) {
-        res.redirect('/account');
+        res.redirect(401, '/account');
         return;
     }
 
@@ -160,7 +263,7 @@ router.post('/buy', async (req, res, next) => {
     let insertResults;
     try {
         insertResults = await db.query(`INSERT INTO \`coinsPayments\` SET ?`, [dbData]);
-    } catch(error) {
+    } catch (error) {
         log.error(error);
         res.redirect('./payment/failed');
         return;
@@ -182,10 +285,9 @@ router.post('/buy', async (req, res, next) => {
                 paymentId
             },
             redirectUrl: `${Config.site.publicUrl}/greencoins/payment?userId=${req.user.getId()}&paymentId=${paymentId}`,
-            //webhookUrl: `${Config.site.publicUrl}/greencoins/payment/webhook`,
-            webhookUrl: `http://google.nl`
+            webhookUrl: `${Config.site.publicUrl}/greencoins/payment/webhook`
         });
-    } catch(error) {
+    } catch (error) {
         log.error(error);
         res.redirect('./payment/failed?reason=psp');
         return;
@@ -197,7 +299,7 @@ router.post('/buy', async (req, res, next) => {
         await db.query(`UPDATE \`coinsPayments\` SET ? WHERE \`paymentId\` = ?`, [{
             mollieIdentifier
         }, paymentId]);
-    } catch(error) {
+    } catch (error) {
         log.error(error);
         res.redirect('./payment/failed');
         return;

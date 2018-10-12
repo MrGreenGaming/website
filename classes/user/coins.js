@@ -87,9 +87,10 @@ class UserCoins {
      * @param {number} amount
      * @param {number} appId
      * @param {string} comments
+     * @param {boolean} [force]
      * @return {Promise<number>} success
      */
-    submitTransaction(amount, appId, comments) {
+    submitTransaction(amount, appId, comments, force) {
         return new Promise(async (resolve, reject) => {
             if (!amount) {
                 resolve(false);
@@ -97,10 +98,12 @@ class UserCoins {
             }
 
             //Check if we can afford it
-            if (amount < 0) {
-                if ((this.getBalance() - Math.abs(amount)) < 0) {
-                    resolve(false);
-                    return;
+            if (!force) {
+                if (amount < 0) {
+                    if ((this.getBalance() - Math.abs(amount)) < 0) {
+                        resolve(false);
+                        return;
+                    }
                 }
             }
 

@@ -6,7 +6,7 @@ const router = module.exports = Express.Router({
 
 router.get('/', (req, res) => {
     if (!req.user) {
-        res.redirect('./login');
+        res.redirect(401, './login');
         return;
     }
 
@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 
 router.get('/login', (req, res) => {
     if (req.user) {
-        res.redirect('./');
+        res.redirect(403, './');
         return;
     }
 
@@ -69,5 +69,5 @@ router.post('/login', async (req, res, next) => {
 router.all('/logout', (req, res) => {
     delete req.session.userId;
 
-    res.redirect('./login');
+    res.redirect(200, './login');
 });
