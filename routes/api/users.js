@@ -71,12 +71,32 @@ router.post('/:userId/coins/changeBalance', async (req, res) => {
         generated: new Date()
     };
 
-    user.getCoins().changeBalance(amount);
+    //user.getCoins().changeBalance(amount);
 
-    if (amount < 0)
-        output.coinsTaken = Math.abs(amount);
-    else
-        output.coinsGiven = amount;
+    let coinsTransactionId;
+    try {
+        coinsTransactionId = await user.getCoins().submitTransaction(amount, req.appId, 'Balance change', true);
+    } catch (error) {
+        res.status(500);
+        res.json({
+            error: 0,
+            errorMessage: 'Transaction error'
+        });
+        log.error(error);
+        return;
+    }
+
+    if (!coinsTransactionId) {
+        output.error = 11;
+        output.errorMessage = 'Transaction denied';
+    } else {
+        output.coinsTransactionId = coinsTransactionId;
+
+        if (amount < 0)
+            output.coinsTaken = Math.abs(amount);
+        else
+            output.coinsGiven = amount;
+    }
 
     //New balance
     output.coinsBalance = user.getCoins().getBalance();
