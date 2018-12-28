@@ -5,7 +5,9 @@ const router = module.exports = Express.Router({
 });
 
 router.get('/', (req, res) => {
-    const template = require('../views/index.marko');
+	res.redirect('/forums');
+	
+    /*const template = require('../views/index.marko');
     res.marko(template, {
         page: {
             title: 'Mr. Green Gaming',
@@ -14,27 +16,31 @@ router.get('/', (req, res) => {
             path: App.getExpressPath(req.baseUrl, req.path)
         },
         newsItems: CommunityNews.getItems()
-    });
+    });*/
 });
 
 router.get('/about', (req, res) => {
-    const template = require('../views/about.marko');
+	res.redirect('/forums');
+	
+    /*const template = require('../views/about.marko');
     res.marko(template, {
         page: {
             title: 'About',
             description: 'About the Mr. Green Gaming community and it\'s history which started back in 2006.',
             path: App.getExpressPath(req.baseUrl, req.path)
         }
-    });
+    });*/
 });
 
 router.get('/faq', (req, res) => {
-    const template = require('../views/faq.marko');
+	res.redirect('/forums');
+	
+    /*const template = require('../views/faq.marko');
     res.marko(template, {
         page: {
             title: 'FAQ',
             description: 'Frequently Asked Questions about Mr. Green Gaming answered.',
             path: App.getExpressPath(req.baseUrl, req.path)
         }
-    });
+    });*/
 });

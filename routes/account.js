@@ -4,7 +4,7 @@ const router = module.exports = Express.Router({
     caseSensitive: App.express.get('case sensitive routing')
 });
 
-router.get('/', (req, res) => {
+/*router.get('/', (req, res) => {
     if (!req.user) {
         res.redirect(401, './login');
         return;
@@ -70,4 +70,4 @@ router.all('/logout', (req, res) => {
     delete req.session.userId;
 
     res.redirect(200, './login');
-});
+});*/
