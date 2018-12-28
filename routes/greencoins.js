@@ -4,15 +4,15 @@ const router = module.exports = Express.Router({
     caseSensitive: App.express.get('case sensitive routing')
 });
 
-const mollie = require('@mollie/api-client')({
+/*const mollie = require('@mollie/api-client')({
     apiKey: Config.mollie.apiKey
-});
+});*/
 
 router.get('/', (req, res) => {
     res.redirect('/account');
 });
 
-router.get('/buy', (req, res) => {
+/*router.get('/buy', (req, res) => {
     if (!req.user) {
         res.redirect(401, '/account');
         return;
@@ -308,4 +308,4 @@ router.post('/buy', async (req, res, next) => {
     log.info(`Directing user #${req.user.getId()} to Mollie for payment ID ${paymentId} (Mollie identifier ${mollieIdentifier}}`);
 
     res.redirect(molliePayment.getPaymentUrl());
-});
+});*/
