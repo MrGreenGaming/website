@@ -104,3 +104,62 @@ router.post('/details', async (req, res) => {
         }
     });
 });
+
+router.post('/details-multiple', async (req, res) => {
+    const usersArray = req.body.users;
+    if (typeof(usersArray) !== 'object') {
+        res.json({
+            error: 1,
+            errorMessage: 'Invalid users array'
+        });
+        return;        
+    }
+
+    if (usersArray.length < 1 ) {
+        res.json({
+            error: 1,
+            errorMessage: 'Invalid users array'
+        });
+        return;
+    }
+
+
+    const userReturn = [];
+    for (const requestedUser of usersArray) {
+        const userId = parseInt(requestedUser.userId, 10);
+        
+        if (isNaN(userId)) {
+            log.warn('userID NaN');
+            continue;
+        };
+
+        let user;
+        
+        try {
+            user = await Users.get(userId);
+        } catch (error) {
+            log.error(error);
+            continue;
+        }
+
+        if (!user) {
+            continue;
+        }
+
+        const singleUser = {
+            users: user.getId(),
+            name: user.getName(),
+            emailAddress: undefined, //Deprecated
+            joinDate: user.getCreated(),
+            joinTimestamp: user.getCreated() ? Math.round(user.getCreated().getTime() / 1000) : undefined,
+            coinsBalance: user.getCoins().getBalance(),
+            profile: {
+                photo: user.getAvatar(),
+                photoThumb: user.getAvatarThumb(),
+                title: undefined //Deprecated
+            }
+        };
+        userReturn.push(singleUser);
+    }
+    res.json({users: userReturn});
+});
